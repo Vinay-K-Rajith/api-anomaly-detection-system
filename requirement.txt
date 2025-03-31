@@ -1,0 +1,35 @@
+# Core Data Science
+numpy==1.24.3
+pandas==1.5.3
+scikit-learn==1.2.2
+tensorflow==2.12.0
+prophet==1.1.4
+
+# Visualization
+matplotlib==3.7.1
+seaborn==0.12.2
+grafana-api==1.0.3
+
+# Monitoring & Telemetry
+opentelemetry-sdk==1.18.0
+opentelemetry-exporter-otlp==1.18.0
+opentelemetry-instrumentation-flask==0.39b0
+aws-xray-sdk==2.12.0
+prometheus-client==0.17.1
+
+# Data Storage & Processing
+elasticsearch==8.8.0
+psycopg2==2.9.6
+apache-flink==1.17.0
+
+# Web & API
+flask==2.3.2
+
+# Testing
+pytest==7.3.1
+locust==2.15.1
+
+# Utilities
+pyyaml==6.0
+langchain==0.0.267
+kubernetes==26.1.0
