@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  flask_app:
+    container_name: api_monitor_app
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - PYTHONUNBUFFERED=0
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/api_monitoring
+    depends_on:
+      - postgres
+      - elasticsearch
+    volumes:
+      - ./src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  postgres:
+    container_name: postgres
+    image: timescale/timescaledb:latest-pg13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=api_monitoring
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+
+  data_collector:
+    container_name: data_collector
+    build:
+      context: .
+      dockerfile: Dockerfile.collector
+    depends_on:
+      - postgres
+      - elasticsearch
+    environment:
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/api_monitoring
+      - ES_HOST=elasticsearch:9200
+    volumes:
+      - ./src:/app/src
+
+  anomaly_detector:
+    container_name: anomaly_detector
+    build:
+      context: .
+      dockerfile: Dockerfile.detector
+    depends_on:
+      - postgres
+      - elasticsearch
+    environment:
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/api_monitoring
+      - ES_HOST=elasticsearch:9200
+    volumes:
+      - ./src:/app/src
+      - ./models:/app/models
+
+volumes:
+  postgres-data:
+    driver: local
+  elasticsearch-data:
+    driver: local
