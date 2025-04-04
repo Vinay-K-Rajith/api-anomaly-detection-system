@@ -72,17 +72,3 @@ api-anomaly-detection-system/
 └── Dockerfile            # Main application Dockerfile
 ```
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-Citations:
-[1] https://pplx-res.cloudinary.com/image/upload/v1743440467/user_uploads/UdIjwNHdmhAGfwH/image.jpg
-[2] https://pplx-res.cloudinary.com/image/upload/v1743442744/user_uploads/XXTUkSTHBDKmUzd/image.jpg
-
----
-Answer from Perplexity: pplx.ai/share
